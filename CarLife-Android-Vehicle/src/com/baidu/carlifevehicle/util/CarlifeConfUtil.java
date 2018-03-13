@@ -15,23 +15,25 @@
  *****************************************************************************/
 package com.baidu.carlifevehicle.util;
 
+import android.content.Context;
+import android.media.AudioManager;
+import android.text.TextUtils;
+
+import com.baidu.carlifevehicle.CarLifeApplication;
+import com.baidu.carlifevehicle.CommonParams;
+import com.baidu.carlifevehicle.connect.CarlifeCmdMessage;
+import com.baidu.carlifevehicle.touch.TouchListenerManager;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.baidu.carlifevehicle.CommonParams;
-import com.baidu.carlifevehicle.connect.CarlifeCmdMessage;
-import com.baidu.carlifevehicle.touch.TouchListenerManager;
-
-import android.content.Context;
-import android.media.AudioManager;
-import android.text.TextUtils;
 
 public class CarlifeConfUtil {
 
@@ -313,8 +315,12 @@ public class CarlifeConfUtil {
 
         try {
             bdcf = new File(CONF_FILE_DIR + "/" + CONF_FILE);
-            reader = new BufferedReader(new FileReader(bdcf));
-            propertyMap = new HashMap<String, String>();
+            if(null==bdcf || !bdcf.exists()){
+                reader = new BufferedReader(new InputStreamReader(CarLifeApplication.getGlobContext().getAssets().open(CONF_FILE))) ;
+            }else{
+                reader = new BufferedReader(new FileReader(bdcf));
+            }
+            propertyMap = new HashMap<>();
 
             while ((line = reader.readLine()) != null) {
                 LogUtil.d(TAG, "line " + linenum + ": " + line);
